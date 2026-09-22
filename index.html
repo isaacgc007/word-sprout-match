@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173f5f">
+  <meta name="description" content="Match English words with picture cards in a cheerful memory game for K3, P1 and P2 learners.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Word Sprout">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23173f5f'/%3E%3Cpath d='M32 51V27' stroke='%23fff6dc' stroke-width='6' stroke-linecap='round'/%3E%3Cellipse cx='22' cy='24' rx='12' ry='8' transform='rotate(32 22 24)' fill='%2348c9a9'/%3E%3Cellipse cx='42' cy='19' rx='12' ry='8' transform='rotate(-32 42 19)' fill='%23ffd45c'/%3E%3C/svg%3E">
+  <title>Word Sprout Match</title>
+  <link rel="stylesheet" href="./styles.css?v=5">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <button class="brand" id="homeButton" type="button" aria-label="Word Sprout Match home">
+        <span class="brand-seed" aria-hidden="true">🌱</span>
+        <span><strong>Word Sprout</strong><small>MATCH &amp; GROW</small></span>
+      </button>
+      <div class="top-actions">
+        <div class="total-stars" aria-label="Total stars"><span aria-hidden="true">★</span><strong id="totalStars">0</strong></div>
+        <button class="icon-button" id="soundButton" type="button" aria-label="Turn sound off">🔊</button>
+        <button class="icon-button" id="rewardsButton" type="button" aria-label="Open sticker book">🏅</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="screen start-screen active" id="startScreen" aria-labelledby="startTitle">
+        <div class="start-copy">
+          <p class="eyebrow">A WORD + PICTURE MEMORY GAME</p>
+          <h1 id="startTitle">Match a word.<br><em>Grow a garden!</em></h1>
+          <p class="intro">Turn over two cards. Find the English word and its picture before your raindrops run out.</p>
+
+          <fieldset class="choice-group">
+            <legend>1. Pick a word level</legend>
+            <div class="segmented level-options">
+              <label><input type="radio" name="level" value="K3" checked><span><b>K3</b><small>First words</small></span></label>
+              <label><input type="radio" name="level" value="P1"><span><b>P1</b><small>Growing words</small></span></label>
+              <label><input type="radio" name="level" value="P2"><span><b>P2</b><small>Big explorer</small></span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="choice-group">
+            <legend>2. Choose a challenge</legend>
+            <div class="segmented difficulty-options">
+              <label><input type="radio" name="difficulty" value="very-easy"><span><b>Very easy</b><small>Cards open · 3 misses</small></span></label>
+              <label><input type="radio" name="difficulty" value="easy" checked><span><b>Easy</b><small>15 misses allowed</small></span></label>
+              <label><input type="radio" name="difficulty" value="hard"><span><b>Hard</b><small>10 misses allowed</small></span></label>
+            </div>
+          </fieldset>
+
+          <button class="primary-button" id="startButton" type="button">Plant my game <span aria-hidden="true">→</span></button>
+          <p class="library-note"><strong>900 picture words</strong> · 300 different words in every level</p>
+        </div>
+
+        <div class="start-art" aria-hidden="true">
+          <div class="spark-orb">✦</div>
+          <div class="sample-card word-card-sample">apple</div>
+          <div class="sample-card picture-card-sample">🍎</div>
+          <div class="match-spark">+100</div>
+          <div class="flower-row">🌼 🌷 🌻 🌸 🌼</div>
+          <div class="art-caption"><span>8</span> pairs in every garden</div>
+        </div>
+      </section>
+
+      <section class="screen game-screen" id="gameScreen" aria-labelledby="gameTitle">
+        <div class="game-head">
+          <div>
+            <button class="back-button" id="leaveButton" type="button">← Home</button>
+            <p class="eyebrow" id="gameEyebrow">K3 · EASY GARDEN</p>
+            <h1 id="gameTitle">Find all 8 pairs!</h1>
+          </div>
+          <div class="game-stats">
+            <div class="stat"><small>SCORE</small><strong id="scoreValue">0</strong></div>
+            <div class="stat"><small>PAIRS</small><strong><span id="pairsValue">0</span>/8</strong></div>
+            <div class="stat misses" id="missStat"><small>RAINDROPS</small><strong><span aria-hidden="true">💧</span> <span id="missesLeft">15</span></strong></div>
+          </div>
+        </div>
+
+        <div class="progress-track" aria-hidden="true"><i id="gameProgress"></i></div>
+        <p class="status-line" id="statusLine" aria-live="polite">Pick any card to begin.</p>
+        <div class="card-grid" id="cardGrid" aria-label="Memory card board"></div>
+        <div class="combo-pop" id="comboPop" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="resultModal" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+    <div class="modal result-card">
+      <div class="result-icon" id="resultIcon" aria-hidden="true">🏆</div>
+      <p class="eyebrow" id="resultEyebrow">GARDEN COMPLETE</p>
+      <h2 id="resultTitle">Every word has sprouted!</h2>
+      <p id="resultMessage">Brilliant matching. Your garden is full of new words.</p>
+      <div class="result-stats">
+        <div><small>SCORE</small><strong id="finalScore">0</strong></div>
+        <div><small>STARS</small><strong id="earnedStars">+0 ★</strong></div>
+        <div><small>MISSES</small><strong id="finalMisses">0</strong></div>
+      </div>
+      <div class="new-sticker hidden" id="newSticker"><span id="newStickerIcon">🌻</span><div><small>NEW STICKER!</small><strong id="newStickerName">Sunflower</strong></div></div>
+      <div class="modal-actions">
+        <button class="secondary-button" id="resultHomeButton" type="button">Choose a level</button>
+        <button class="primary-button" id="playAgainButton" type="button">Play again →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="rewardsModal" role="dialog" aria-modal="true" aria-labelledby="rewardsTitle">
+    <div class="modal rewards-card">
+      <button class="modal-close" id="closeRewardsButton" type="button" aria-label="Close sticker book">×</button>
+      <p class="eyebrow">MY REWARDS</p>
+      <h2 id="rewardsTitle">Sticker garden</h2>
+      <p>Finish games and collect stars to unlock garden friends.</p>
+      <div class="sticker-grid" id="stickerGrid"></div>
+      <p class="next-reward" id="nextRewardText"></p>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="leaveModal" role="dialog" aria-modal="true" aria-labelledby="leaveTitle">
+    <div class="modal confirm-card">
+      <div class="result-icon" aria-hidden="true">🌦️</div>
+      <h2 id="leaveTitle">Leave this garden?</h2>
+      <p>This game will end, but all your saved stars and stickers are safe.</p>
+      <div class="modal-actions">
+        <button class="secondary-button" id="stayButton" type="button">Keep playing</button>
+        <button class="primary-button" id="confirmLeaveButton" type="button">Leave game</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+  <script src="./words.js?v=5"></script>
+  <script src="./app.js?v=5"></script>
+</body>
+</html>
